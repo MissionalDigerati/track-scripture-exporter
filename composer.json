@@ -1,0 +1,16 @@
+{
+    "name": "missional-digerati/track-scripture-exporter",
+    "description": "This tool provides an easy way to export Bible verses for your Christian track development.",
+    "type": "project",
+    "license": "GPL-3",
+    "authors": [
+        {
+            "name": "Codemis",
+            "email": "johnathan@missionaldigerati.org"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.2"
+    }
+}
