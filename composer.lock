@@ -4,8 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5a46a4cc620e148dfe34e15307b72276",
-    "packages": [],
+    "content-hash": "318de74d80b70d28a704af9c03a72753",
+    "packages": [
+        {
+            "name": "faithcomesbyhearing/dbt-sdk-php",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@bitbucket.org:faithcomesbyhearing/dbt-sdk-php.git",
+                "reference": "origin/master"
+            },
+            "type": "library",
+            "time": "2016-12-15T23:09:59+00:00"
+        }
+    ],
     "packages-dev": [
         {
             "name": "squizlabs/php_codesniffer",
@@ -61,9 +73,13 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "faithcomesbyhearing/dbt-sdk-php": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": ">=7.0"
+    },
     "platform-dev": []
 }

@@ -9,7 +9,24 @@
             "email": "johnathan@missionaldigerati.org"
         }
     ],
-    "require": {},
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "faithcomesbyhearing/dbt-sdk-php",
+                "version": "dev-master",
+                "source": {
+                    "url": "git@bitbucket.org:faithcomesbyhearing/dbt-sdk-php.git",
+                    "type": "git",
+                    "reference": "origin/master"
+                }
+            }
+        }
+    ],
+    "require": {
+      "php": ">=7.0",
+      "faithcomesbyhearing/dbt-sdk-php": "dev-master"
+    },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.2"
     },
