@@ -23,14 +23,11 @@ if (file_exists($bookletsFile)) {
     $data = Yaml::parseFile($bookletsFile);
     $booklets = $data['booklets'];
 }
-$dbt = new Dbt(getenv('DBT_KEY'));
+$dbt = new Dbt(getenv('DBT_KEY'), null, null, 'array');
 /**
  * Get the languages available
  */
-$data = $dbt->getLibraryLanguage();
-if (count($data) > 0) {
-    $languages = json_decode($data, true);
-}
+$languages = $dbt->getLibraryLanguage();
 /**
  * Set the current step
  */
