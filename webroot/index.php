@@ -17,8 +17,11 @@ $dotenv->load(ROOT_DIR . DIRECTORY_SEPARATOR . '.env');
  * Get all the booklets from the YAML file
  */
 $bookletsFile = ROOT_DIR . DIRECTORY_SEPARATOR . 'booklets.yaml';
+$versions = [];
 $booklets = [];
 $languages = [];
+$desiredBooklet = null;
+$desiredLanguage = null;
 if (file_exists($bookletsFile)) {
     $data = Yaml::parseFile($bookletsFile);
     $booklets = $data['booklets'];
@@ -35,40 +38,46 @@ $step = 1;
 if ((count($_REQUEST) > 0) && (array_key_exists('next_step', $_REQUEST))) {
     $step = (int) $_REQUEST['next_step'];
 }
-/**
- * STEP 1
- */
+if ((count($_REQUEST) > 0) && (array_key_exists('desired_booklet', $_REQUEST))) {
+    foreach ($booklets as $booklet) {
+        if ($_REQUEST['desired_booklet'] === $booklet['title']) {
+            $desiredBooklet = $booklet;
+            break;
+        }
+    }
+}
+if ((count($_REQUEST) > 0) && (array_key_exists('desired_language', $_REQUEST))) {
+    foreach ($languages as $language) {
+        if ($_REQUEST['desired_language'] === $language['language_code']) {
+            $desiredLanguage = $language;
+            break;
+        }
+    }
+}
 if ($step === 2) {
-    $desiredBooklet = $_REQUEST['desired_booklet'];
-    $desiredLanguage = $_REQUEST['desired_language'];
     /**
      * validate the given data
      */
-    $exists = false;
-    foreach ($booklets as $booklet) {
-        if ($desiredBooklet === $booklet['title']) {
-            $exists = true;
-            break;
-        }
-    }
-    if (!$exists) {
-        $step = 1;
-        $error = 'The booklet does not exist!';
-    }
-    $exists = false;
-    foreach ($languages as $language) {
-        if ($desiredLanguage === $language['language_code']) {
-            $exists = true;
-            break;
-        }
-    }
-    if (!$exists) {
+    if (!$desiredLanguage) {
         $step = 1;
         $error = 'The language does not exist!';
+    } else if (!$desiredBooklet) {
+        $step = 1;
+        $error = 'The booklet does not exist!';
+    } else {
+        $data = $dbt->getLibraryVolume(null, null, 'text', null, null, $desiredLanguage);
+        foreach ($data as $version) {
+            if (!array_key_exists($version['version_code'], $versions)) {
+                $versions[$version['version_code']] = $version['volume_name'];
+            }
+        }
+        if (count($versions) === 0) {
+            $step = 1;
+            $error = 'Sorry, but there are no Bible versions for that language.';
+        }
     }
-    if ($step === 2) {
-        echo 'All Clear';
-    }
+} elseif ($step === 3) {
+    echo 'HERE';
 }
 ?>
 <!DOCTYPE html>
@@ -84,7 +93,7 @@ if ($step === 2) {
         <?php } ?>
         <?php if ($step === 1) { ?>
             <form action="/" name="track_scripture_step_1" method="POST">
-                <label for="desired-booklet">Booklet:</label><br>
+                <label for="desired_booklet">Booklet:</label><br>
                 <?php
                     foreach ($booklets as $index => $booklet) {
                         echo '<input type="radio" name="desired_booklet" value="' . $booklet['title'] . '"';
@@ -94,11 +103,11 @@ if ($step === 2) {
                         echo '> <strong>' . $booklet['title'] . '</strong>: ' . $booklet['description'] . '<br><br>';
                     }
                 ?>
-                <label for="desired-language">Language:</label><br>
+                <label for="desired_language">Language:</label><br>
                 <select name="desired_language">
                     <?php
                         foreach ($languages as $language) {
-                            echo '<option value="' . $language['language_code'] . '">' . $language['language_name'] . ' (' . $language['english_name'] . ')</option>';
+                            echo '<option value="' . $language['language_code'] . '">' . $language['language_name'] . ' (' . $language['english_name'] . ' - ' . $language['language_code'] . ')</option>';
                         }
                     ?>
                 </select><br><br>
@@ -107,6 +116,17 @@ if ($step === 2) {
             </form>
         <?php } elseif ($step === 2) { ?>
             <form action="/" name="track_scripture_step_2" method="POST">
+                <label for="desired_version">Bible Version:</label><br>
+                <select name="desired_version">
+                    <?php
+                        foreach ($versions as $key => $value) {
+                            echo '<option value="' . $key . '">' . $value . '</option>';
+                        }
+                    ?>
+                </select><br><br>
+                <input type="hidden" name="next_step" value="3">
+                <input type="hidden" name="desired_booklet" value="<?php echo $desiredBooklet; ?>">
+                <input type="hidden" name="desired_language" value="<?php echo $desiredLanguage; ?>">
                 <input type="submit" name="submit" value="Submit"><br><br>
             </form>
         <?php } ?>
