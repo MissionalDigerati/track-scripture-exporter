@@ -1,14 +1,15 @@
 <?php
 use Symfony\Component\Yaml\Yaml;
 
-require_once __DIR__ . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+define('ROOT_DIR', dirname(__DIR__));
+require_once ROOT_DIR . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 /**
  * Get all the booklets from the YAML file
  */
-$bookletsXml = 'booklets.yaml';
+$bookletsFile = ROOT_DIR . DIRECTORY_SEPARATOR . 'booklets.yaml';
 $booklets = [];
-if (file_exists($bookletsXml)) {
-    $data = Yaml::parseFile('booklets.yaml');
+if (file_exists($bookletsFile)) {
+    $data = Yaml::parseFile($bookletsFile);
     $booklets = $data['booklets'];
 }
 ?>
