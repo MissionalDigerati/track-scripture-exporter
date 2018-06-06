@@ -17,11 +17,13 @@ $dotenv->load(ROOT_DIR . DIRECTORY_SEPARATOR . '.env');
  * Get all the booklets from the YAML file
  */
 $bookletsFile = ROOT_DIR . DIRECTORY_SEPARATOR . 'booklets.yaml';
+$verses = [];
 $versions = [];
 $booklets = [];
 $languages = [];
 $desiredBooklet = null;
 $desiredLanguage = null;
+$desiredVersion = null;
 if (file_exists($bookletsFile)) {
     $data = Yaml::parseFile($bookletsFile);
     $booklets = $data['booklets'];
@@ -54,6 +56,22 @@ if ((count($_REQUEST) > 0) && (array_key_exists('desired_language', $_REQUEST)))
         }
     }
 }
+if ($desiredLanguage !== null) {
+    $data = $dbt->getLibraryVolume(null, null, 'text', null, null, $desiredLanguage['language_code']);
+    foreach ($data as $version) {
+        if (!array_key_exists($version['version_code'], $versions)) {
+            $versions[$version['version_code']] = $version['volume_name'];
+        }
+    }
+}
+if ((count($_REQUEST) > 0) && (array_key_exists('desired_version', $_REQUEST))) {
+    foreach ($versions as $key => $value) {
+        if ($_REQUEST['desired_version'] === $key) {
+            $desiredVersion = $key;
+            break;
+        }
+    }
+}
 if ($step === 2) {
     /**
      * validate the given data
@@ -64,20 +82,36 @@ if ($step === 2) {
     } else if (!$desiredBooklet) {
         $step = 1;
         $error = 'The booklet does not exist!';
-    } else {
-        $data = $dbt->getLibraryVolume(null, null, 'text', null, null, $desiredLanguage);
-        foreach ($data as $version) {
-            if (!array_key_exists($version['version_code'], $versions)) {
-                $versions[$version['version_code']] = $version['volume_name'];
-            }
-        }
-        if (count($versions) === 0) {
-            $step = 1;
-            $error = 'Sorry, but there are no Bible versions for that language.';
-        }
+    } else if (count($versions) === 0) {
+        $step = 1;
+        $error = 'Sorry, but there are no Bible versions for that language.';
     }
 } elseif ($step === 3) {
-    echo 'HERE';
+    /**
+     * Create the excel file
+     */
+     /**
+      * validate the given data
+      */
+     if (!$desiredVersion) {
+         $step = 1;
+         $error = 'Sorry, the version does not exist!';
+     }
+     $damId = strtoupper($desiredLanguage['language_code']) . strtoupper($desiredVersion);
+     foreach ($desiredBooklet['passages'] as $passage) {
+         $passageDamId = $damId . strtoupper($passage['collection']) . '2ET';
+         $verseData = $dbt->getTextVerse(
+             $passageDamId,
+             $passage['book_id'],
+             $passage['chapter'],
+             $passage['start_verse'],
+             $passage['end_verse']
+         );
+         array_push($verses, array(
+             'passage'      =>  $passage,
+             'verses'       =>  $verseData
+         ));
+     }
 }
 ?>
 <!DOCTYPE html>
@@ -125,8 +159,8 @@ if ($step === 2) {
                     ?>
                 </select><br><br>
                 <input type="hidden" name="next_step" value="3">
-                <input type="hidden" name="desired_booklet" value="<?php echo $desiredBooklet; ?>">
-                <input type="hidden" name="desired_language" value="<?php echo $desiredLanguage; ?>">
+                <input type="hidden" name="desired_booklet" value="<?php echo $desiredBooklet['title']; ?>">
+                <input type="hidden" name="desired_language" value="<?php echo $desiredLanguage['language_code']; ?>">
                 <input type="submit" name="submit" value="Submit"><br><br>
             </form>
         <?php } ?>
