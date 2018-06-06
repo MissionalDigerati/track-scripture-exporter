@@ -87,9 +87,6 @@ if ($step === 2) {
         $error = 'Sorry, but there are no Bible versions for that language.';
     }
 } elseif ($step === 3) {
-    /**
-     * Create the excel file
-     */
      /**
       * validate the given data
       */
@@ -111,6 +108,29 @@ if ($step === 2) {
              'passage'      =>  $passage,
              'verses'       =>  $verseData
          ));
+     }
+     if (empty($verses)) {
+         $step = 1;
+         $error = 'Sorry, no verses were found!';
+     } else {
+         /**
+          * Create the excel file
+          */
+         $filename = strtolower(trim(preg_replace('#\W+#', '_', $desiredBooklet['title'] . '_' . $desiredLanguage['language_code'] . '_' . $desiredVersion), '_'));
+         header('Content-type: application/ms-excel');
+         header('Content-Disposition: attachment;filename=' . $filename . '.xls');
+         echo "Language\tBible Version\tBook Id\tBook Name\tChapter\tStarting Verse\tEnding Verse\tText\n";
+         foreach ($verses as $verseContent) {
+             $bookName = '';
+             $verseText = '';
+             $passage = $verseContent['passage'];
+             foreach ($verseContent['verses'] as $verse) {
+                 $bookName = $verse['book_name'];
+                 $verseText .= trim($verse['verse_text']);
+             }
+             echo $desiredLanguage['language_name'] . "\t" . $desiredVersion . "\t" . $passage['book_id'] . "\t\"" . $bookName . "\"\t" . $passage['chapter'] . "\t" . $passage['start_verse'] . "\t" . $passage['end_verse'] . "\t\"" . $verseText . "\"\n";
+         }
+         exit;
      }
 }
 ?>
@@ -149,7 +169,7 @@ if ($step === 2) {
                 <input type="submit" value="Submit"><br><br>
             </form>
         <?php } elseif ($step === 2) { ?>
-            <form action="/" name="track_scripture_step_2" method="POST">
+            <form action="/" name="track_scripture_step_2" method="POST" target="_blank">
                 <label for="desired_version">Bible Version:</label><br>
                 <select name="desired_version">
                     <?php
@@ -164,5 +184,6 @@ if ($step === 2) {
                 <input type="submit" name="submit" value="Submit"><br><br>
             </form>
         <?php } ?>
+        <p><a href="/">Start Over</a></p>
     </body>
 </html>
