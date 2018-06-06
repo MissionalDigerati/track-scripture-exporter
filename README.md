@@ -12,8 +12,8 @@ Questions or problems? Please post them on the [issue tracker](https://github.co
 
 This project was built on PHP 7.0.  It uses [Composer](https://getcomposer.org/) to manage third party libraries.  here are the steps to install.
 
-1. Install third party libraries: `composer install --no-dev`
-
+- Install third party libraries: `composer install --no-dev`
+- When you setup the server, the document root should point to webroot to protect the settings file.
 
 ## License
 
