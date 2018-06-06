@@ -9,11 +9,30 @@
             "email": "johnathan@missionaldigerati.org"
         }
     ],
-    "require": {},
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "faithcomesbyhearing/dbtsdk",
+                "version": "dev-master",
+                "source": {
+                    "url": "git@bitbucket.org:faithcomesbyhearing/dbt-sdk-php.git",
+                    "type": "git",
+                    "reference": "origin/master"
+                }
+            }
+        }
+    ],
+    "require": {
+      "php": ">=7.0",
+      "faithcomesbyhearing/dbtsdk": "dev-master",
+      "symfony/yaml": "^3.4",
+      "symfony/dotenv": "^3.4"
+    },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.2"
     },
-    "scripts": {
-      "lint": "vendor/bin/phpcs --standard=psr2 src/"
+    "autoload": {
+      "classmap": ["vendor/faithcomesbyhearing/dbtsdk/Dbt.php"]
     }
 }
