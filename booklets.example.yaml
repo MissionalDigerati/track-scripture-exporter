@@ -1,0 +1,54 @@
+# Provide a list of all the booklets/tracks in your library.
+# Please note, currently the Digital Bible Platform only supports retrieving
+# one chapter at a time.  If you have a verse that spans multiple chapters, you
+# will need to add them as seperate passages.
+booklets:
+  # Define each booklet with:
+  #   title: The title of the booklet (string)
+  #   description: The description of the booklet (string)
+  #   passages: All the passages used in the booklet (array)
+  - title: 'One Life to Live'
+    description: 'A book about life'
+    passages:
+      # Define each passage with:
+      #   book_id: The id in Digital Bible Platform's system (string)
+      #   chapter: The chapter of the passage (integer)
+      #   start_verse: The starting verse in the chapter (integer)
+      #   end_verse:  The ending verse number in the chapter (integer)
+      #   collection: The testemant the passage belongs to. O = Old Testament, N = New Testament (string)
+      - book_id: Gen
+        chapter: 2
+        start_verse: 1
+        end_verse: 5
+        collection: O
+      # Define a second passage
+      - book_id: 2Sam
+        chapter: 1
+        start_verse: 1
+        end_verse: 3
+        collection: O
+      # Define a third passage
+      - book_id: 2Chr
+        chapter: 1
+        start_verse: 5
+        end_verse: 8
+        collection: O
+  # Define a second booklet
+  - title: 'Narrow Way'
+    description: 'A book about the right way'
+    passages:
+      - book_id: Jonah
+        chapter: 1
+        start_verse: 3
+        end_verse: 5
+        collection: O
+      - book_id: Hab
+        chapter: 1
+        start_verse: 1
+        end_verse: 3
+        collection: O
+      - book_id: Rev
+        chapter: 7
+        start_verse: 5
+        end_verse: 8
+        collection: N
