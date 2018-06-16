@@ -124,9 +124,11 @@ if ($step === 2) {
              $bookName = '';
              $verseText = '';
              $passage = $verseContent['passage'];
-             foreach ($verseContent['verses'] as $verse) {
-                 $bookName = $verse['book_name'];
-                 $verseText .= trim($verse['verse_text']);
+             if ($verseContent['verses']) {
+                 foreach ($verseContent['verses'] as $verse) {
+                     $bookName = $verse['book_name'];
+                     $verseText .= trim($verse['verse_text']);
+                 }
              }
              echo $desiredLanguage['language_name'] . "\t" . $desiredVersion . "\t" . $passage['book_id'] . "\t\"" . $bookName . "\"\t" . $passage['chapter'] . "\t" . $passage['start_verse'] . "\t" . $passage['end_verse'] . "\t\"" . $verseText . "\"\n";
          }
